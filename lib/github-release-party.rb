@@ -76,18 +76,18 @@ class GithubReleaseParty
 
   def self.env_ok
     if not ENV["GITHUB_RELEASE_TOKEN"]
-      puts "Configure GITHUB_RELEASE_TOKEN to create GitHub releases."
+      puts "Configure GITHUB_RELEASE_TOKEN to create GitHub releases. See https://github.com/stefansundin/github-release-party#setup"
       return false
     end
     if not repo
-      puts "Can't find GitHub repo. Please use origin."
+      puts "Can't find the GitHub repo. Please use the remote 'origin'."
       return false
     end
     return true
   end
 
   def self.repo
-    `git remote -v`.scan(/^origin\t.*github.com:(.+)\.git /).uniq.flatten.first
+    `git remote -v`.scan(/^origin\t.*github.com[:\/](.+)\.git /).uniq.flatten.first
   end
 
   private

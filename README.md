@@ -4,9 +4,7 @@
 
 I use this gem to automatically create GitHub releases when I deploy to Heroku. Creating releases helps your users/coworkers/boss to keep up with what's new.
 
-All GitHub repositories have release feeds, so I recommend that you direct people to it from your README. E.g:
-
-- [Release feed](https://github.com/stefansundin/github-release-party/releases.atom)
+All GitHub repositories have release feeds, so I recommend that you direct people to it from your README. E.g: [Release feed](https://github.com/stefansundin/github-release-party/releases.atom)
 
 The gem includes rake tasks to deploy to Heroku, but you may choose to only use the class. Please submit any improvements as issues.
 
