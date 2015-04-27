@@ -4,15 +4,17 @@
 
 I use this gem to automatically create GitHub releases when I deploy to Heroku. Creating releases helps your users/coworkers/boss to keep up with what's new.
 
-All GitHub repositories have release feeds, so I recommend that you direct people to it from your README. E.g: [Release feed](https://github.com/stefansundin/github-release-party/releases.atom)
-
 The gem includes rake tasks to deploy to Heroku, but you may choose to only use the class. Please submit any improvements as issues.
 
-*Note:* If you have the heroku gem installed, please uninstall it as it will interfere. Note that the gem is the obsolete now and you should be using the Heroku toolbelt.
+*Note:* If you have the Heroku gem installed, please uninstall it as it will interfere. Note that the gem is the obsolete now and you should be using the Heroku toolbelt.
 
 ```bash
 gem uninstall heroku -ax
 ```
+
+Example result:
+- Release page: https://github.com/stefansundin/github-activity/releases
+- RSS Feed: https://github.com/stefansundin/github-activity/releases.atom
 
 
 ## Installation
@@ -62,14 +64,14 @@ When deploying, a tag `heroku/vXX` (where XX is the Heroku version number) will 
 
 `rake deploy:tag` can be run if you pushed to Heroku manually.
 
-If this gem updates the format it uses for the releases, you can run `rake retag` to update the text in the releases. This command does not go out to heroku and fetch the list of releases there, it only updates the releases based on your tags. To backfill from Heroku data, see [#backfill](#backfille).
+If this gem updates the message format it uses for the releases, you can run `rake retag` to update the text in the releases. This command does not go out to Heroku and fetch the list of releases there, it only updates the releases based on your tags. To backfill from Heroku data, see below.
 
 
 ## Backfill
 
 The command `heroku releases` is limited to 50 releases, but the API supports getting all of them. This procedure is tested with heroku-toolbelt 3.32.0.
 
-We will use the heroku toolbelt to easily get the list of releases and hashes. Make sure you're logged in (`heroku auth:whoami`).
+We will use the Heroku API to get the list of releases and hashes. Make sure you're logged in with the toolbelt (`heroku auth:whoami`).
 
 The code below will output a list of `git tag` commands that you can run to build your tags.
 
