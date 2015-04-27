@@ -24,31 +24,30 @@ namespace :deploy do
   desc "Tag latest release"
   task :tag do
     return unless GithubReleaseParty.env_ok
-    Bundler.with_clean_env do
-      # get heroku version number
-      ver = `heroku releases`.split("\n")[1].split(" ")[0]
-      hash = `git rev-parse HEAD`.strip
-      tag_name = "heroku/#{ver}"
 
-      # build tag message
-      repo = GithubReleaseParty.repo
-      last_tag = `git describe --tags --abbrev=0 --match 'heroku/v*'`.strip
-      commits = `git log #{last_tag}..#{hash} --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
-      message = "Deploy #{hash[0..6]}\n\nDiff: https://github.com/#{repo}/compare/#{last_tag}...#{tag_name}\n#{commits}"
+    # get heroku version number
+    ver = `heroku releases`.split("\n")[1].split(" ")[0]
+    hash = `git rev-parse HEAD`.strip
+    tag_name = "heroku/#{ver}"
 
-      # tag and push new tag
-      puts "Tagging #{tag_name}."
-      success = system "git tag -a -m \"#{message.gsub('"','\\"')}\" #{tag_name} #{hash}"
-      abort if not success
-      success = system "git push origin #{tag_name}"
-      abort if not success
+    # build tag message
+    repo = GithubReleaseParty.repo
+    last_tag = `git describe --tags --abbrev=0 --match 'heroku/v*'`.strip
+    commits = `git log #{last_tag}..#{hash} --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
+    message = "Deploy #{hash[0..6]}\n\nDiff: https://github.com/#{repo}/compare/#{last_tag}...#{tag_name}\n#{commits}"
 
-      # create GitHub release
-      puts
-      puts "Waiting 3 seconds to let GitHub process the new tag."
-      sleep 3
-      GithubReleaseParty.create(tag_name, ver, message)
-    end
+    # tag and push new tag
+    puts "Tagging #{tag_name}."
+    success = system "git tag -a -m \"#{message.gsub('"','\\"')}\" #{tag_name} #{hash}"
+    abort if not success
+    success = system "git push origin #{tag_name}"
+    abort if not success
+
+    # create GitHub release
+    puts
+    puts "Waiting 3 seconds to let GitHub process the new tag."
+    sleep 3
+    GithubReleaseParty.create(tag_name, ver, message)
   end
 end
 

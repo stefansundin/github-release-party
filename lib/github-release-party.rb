@@ -98,7 +98,7 @@ class GithubReleaseParty
         access_token: ENV["GITHUB_RELEASE_TOKEN"]
       },
       headers: {
-        "User-Agent" => "github-release-party/0.0.1"
+        "User-Agent" => "github-release-party/#{GithubReleaseParty::VERSION}"
       }
     }
   end
