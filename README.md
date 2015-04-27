@@ -56,22 +56,20 @@ Then deploy with:
 rake deploy
 ```
 
-You also get `rake deploy:force`, `rake deploy:tag`, and `rake deploy:retag`.
+You also get `rake deploy:force`, `rake deploy:tag`, and `rake retag`.
 
-When deploying, a tag `heroku/vXX` (where XX is the Heroku version number) will be created, and after it has been pushed, a GitHub release will be created for it.
+When deploying, a tag `heroku/vXX` (where XX is the Heroku version number) will be created, and then a GitHub release will be created for it.
 
 `rake deploy:force` does the exact same thing, but it forces the Git push to Heroku.
 
 `rake deploy:tag` can be run if you pushed to Heroku manually.
 
-If this gem updates the message format it uses for the releases, you can run `rake retag` to update the text in the releases. This command does not go out to Heroku and fetch the list of releases there, it only updates the releases based on your tags. To backfill from Heroku data, see below.
+If this gem updates the message format it uses for the releases, you can run `rake retag` to update the text in the tags and releases. This command does not go out to Heroku and fetch the list of releases there, it only updates the releases based on your tags. To backfill from Heroku data, see below.
 
 
 ## Backfill
 
-The command `heroku releases` is limited to 50 releases, but the API supports getting all of them. This procedure is tested with heroku-toolbelt 3.32.0.
-
-We will use the Heroku API to get the list of releases and hashes. Make sure you're logged in with the toolbelt (`heroku auth:whoami`).
+The command `heroku releases` is limited to 50 releases, but the API supports getting all of them. This procedure is tested with heroku-toolbelt 3.32.0. Make sure you're logged in with the toolbelt (`heroku auth:whoami`).
 
 The code below will output a list of `git tag` commands that you can run to build your tags.
 
@@ -87,8 +85,7 @@ response = HTTParty.get("https://api.heroku.com/apps/#{app}/releases",
   headers: {
     "Authorization" => "Basic #{Base64.encode64(':'+key)}".strip,
     "Accept" => "application/vnd.heroku+json; version=3"
-  }
-)
+  })
 deploys = response.parsed_response.select { |r| r["description"].start_with?("Deploy ") }
 puts deploys.map { |r| "GIT_COMMITTER_DATE='#{r["created_at"]}' git tag heroku/v#{r["version"]} " + r["description"][/[0-9a-f]{7}/] }.join("\n")
 ```
