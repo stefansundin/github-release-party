@@ -32,9 +32,18 @@ namespace :deploy do
 
     # build tag message
     repo = GithubReleaseParty.repo
-    last_tag = `git describe --tags --abbrev=0 --match 'heroku/v*'`.strip
+    last_tag = `git describe --tags --abbrev=0 --match 'heroku/v*' 2> /dev/null`.strip
+    if last_tag.empty?
+      # first deploy, use root hash
+      last_tag = `git rev-list --max-parents=0 HEAD`.strip[0..6]
+      first_deploy = true
+    end
     commits = `git log #{last_tag}..#{hash} --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
     message = "Deploy #{hash[0..6]}\n\nDiff: https://github.com/#{repo}/compare/#{last_tag}...#{tag_name}\n#{commits}"
+
+    if first_deploy
+      message = "#{message.strip}\n"+`git show #{last_tag} -s --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
+    end
 
     # tag and push new tag
     puts "Tagging #{tag_name}."
