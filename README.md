@@ -21,9 +21,7 @@ Example result:
 
 ### Setup
 
-You first need to get a GitHub token to create the releases. Use [this script](https://gist.github.com/stefansundin/85b9969ab8664b97b7cf) to get one.
-
-You have to create a GitHub application to get a token. Keep your token secure (don't put it in public repos).
+You first need to [create a GitHub access token](https://github.com/settings/tokens) to create the releases (limit the scope to `repo`). Keep your token secure (don't put it in public repos).
 
 You need to put the token into the environment variable `GITHUB_RELEASE_TOKEN`. A good place to do this is in your `.bash_profile`:
 
