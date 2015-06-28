@@ -39,6 +39,13 @@ group :development do
 end
 ```
 
+This gem is cryptographically signed, you can verify the installation with:
+
+```bash
+gem cert --add <(curl -Ls https://raw.githubusercontent.com/stefansundin/github-release-party/master/certs/stefansundin.pem)
+gem install github-release-party -P MediumSecurity
+```
+
 Require it in your Rakefile:
 
 ```ruby
