@@ -2,7 +2,7 @@ require "github-release-party"
 
 desc "Deploy new version to Heroku"
 task :deploy do
-  return unless GithubReleaseParty.env_ok
+  abort unless GithubReleaseParty.env_ok
   success = system "git push heroku HEAD:master"
   if not success
     abort "Deploy failed."
@@ -13,7 +13,7 @@ end
 namespace :deploy do
   desc "Forcibly deploy new version to Heroku"
   task :force do
-    return unless GithubReleaseParty.env_ok
+    abort unless GithubReleaseParty.env_ok
     success = system "git push heroku HEAD:master --force"
     if not success
       abort "Deploy failed."
@@ -23,7 +23,7 @@ namespace :deploy do
 
   desc "Tag latest release"
   task :tag do
-    return unless GithubReleaseParty.env_ok
+    abort unless GithubReleaseParty.env_ok
 
     # get heroku version number
     ver = `heroku releases`.split("\n")[1].split(" ")[0]
