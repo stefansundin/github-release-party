@@ -26,9 +26,13 @@ namespace :deploy do
     abort unless GithubReleaseParty.env_ok
 
     # get heroku version number
-    ver = `heroku releases`.split("\n")[1].split(" ")[0]
-    hash = `git rev-parse HEAD`.strip
-    tag_name = "heroku/#{ver}"
+    begin
+      ver = `heroku releases`.split("\n")[1].split(" ")[0]
+      hash = `git rev-parse HEAD`.strip
+      tag_name = "heroku/#{ver}"
+    rescue
+      abort "There was a problem getting the release number. Have you logged in with the Heroku cli? Try again with 'rake deploy:tag'."
+    end
 
     # build tag message
     repo = GithubReleaseParty.repo
