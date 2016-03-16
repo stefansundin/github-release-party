@@ -87,7 +87,7 @@ class GithubReleaseParty
   end
 
   def self.repo
-    `git remote -v`.scan(/^origin\t.*github.com[:\/](.+)\.git /).uniq.flatten.first
+    `git remote -v`.scan(/^origin\t.*github\.com[:\/](.+)\.git /).uniq.flatten.first
   end
 
   private

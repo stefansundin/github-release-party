@@ -27,7 +27,8 @@ namespace :deploy do
 
     # get heroku version number
     begin
-      ver = `heroku releases`.split("\n")[1].split(" ")[0]
+      heroku_app = `git remote -v`.scan(/^heroku\t.*heroku\.com[:\/](.+)\.git /).uniq.flatten.first
+      ver = `heroku releases --app '#{heroku_app}'`.split("\n")[1].split(" ")[0]
       hash = `git rev-parse HEAD`.strip
       tag_name = "heroku/#{ver}"
     rescue
