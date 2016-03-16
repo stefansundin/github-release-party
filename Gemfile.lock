@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    github-release-party (0.0.4)
+    github-release-party (0.0.5)
       httparty (~> 0.13)
 
 GEM
@@ -12,14 +12,14 @@ GEM
       multi_xml (>= 0.5.2)
     json (1.8.3)
     multi_xml (0.5.5)
-    rake (10.4.2)
+    rake (11.1.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   github-release-party!
-  rake (= 10.4.2)
+  rake (>= 11.1.0)
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
