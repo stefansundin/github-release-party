@@ -4,13 +4,7 @@
 
 I use this gem to automatically create GitHub releases when I deploy to Heroku. Creating releases helps your users/coworkers/boss to keep up with what's new.
 
-The gem includes rake tasks to deploy to Heroku, but you may choose to only use the class. Please submit any improvements as issues.
-
-*Note:* If you have the Heroku gem installed, please uninstall it as it will interfere. Note that the gem is obsolete now and you should be using [the Heroku toolbelt](https://toolbelt.heroku.com/).
-
-```bash
-gem uninstall heroku -ax
-```
+The gem includes rake tasks to deploy to Heroku. Please submit any improvements as issues.
 
 Example result:
 - Release page: https://github.com/stefansundin/github-activity/releases
@@ -28,6 +22,8 @@ You need to set the environment variable `GITHUB_RELEASE_TOKEN` to token. A good
 ```bash
 export GITHUB_RELEASE_TOKEN=token12345
 ```
+
+In normal use, the Heroku toolbelt is not required. The release number is read from the git push output. Your Heroku remote must be named `heroku`.
 
 ### App
 
@@ -67,7 +63,7 @@ When deploying, a tag `heroku/vXX` (where XX is the Heroku version number) will 
 
 `rake deploy:force` does the exact same thing, but it forces the Git push to Heroku.
 
-`rake deploy:tag` can be run if you pushed to Heroku manually.
+`rake deploy:tag` can be run if you pushed to Heroku manually. You need to have the Heroku toolbelt installed in order to use this command.
 
 If this gem updates the message format it uses for the releases, you can run `rake deploy:retag` to update the text in the tags and releases. This command does not go out to Heroku and fetch the list of releases there, it only updates the releases based on your tags. To backfill from Heroku data, see below.
 
@@ -96,3 +92,13 @@ puts deploys.map { |r| "GIT_COMMITTER_DATE='#{r["created_at"]}' git tag heroku/v
 ```
 
 When you have created all the tags, run `rake deploy:retag` to add the tag message and create the releases.
+
+## Heroku toolbelt
+
+The [Heroku toolbelt](https://toolbelt.heroku.com/) is only needed for `rake deploy:tag` and backfilling data as described above.
+
+If you have the legacy Heroku gem installed, please uninstall it as it will not work properly with this gem.
+
+```bash
+gem uninstall heroku -ax
+```
