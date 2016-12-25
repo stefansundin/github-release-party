@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "httparty", "~> 0.13"
 
-  s.add_development_dependency "rake", ">= 11.1.0"
+  s.add_development_dependency "rake", "~> 12"
 
   s.files        = `git ls-files`.split("\n").select { |f| f.start_with?("lib/") }
   s.executables  = `git ls-files`.split("\n").map { |f| f =~ /^bin\/(.*)/ ? $1 : nil }.compact
