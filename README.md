@@ -6,7 +6,7 @@ I use this gem to automatically create GitHub releases when I deploy to Heroku. 
 
 The gem includes rake tasks to deploy to Heroku, but you may choose to only use the class. Please submit any improvements as issues.
 
-*Note:* If you have the Heroku gem installed, please uninstall it as it will interfere. Note that the gem is the obsolete now and you should be using the Heroku toolbelt.
+*Note:* If you have the Heroku gem installed, please uninstall it as it will interfere. Note that the gem is obsolete now and you should be using [the Heroku toolbelt](https://toolbelt.heroku.com/).
 
 ```bash
 gem uninstall heroku -ax
@@ -23,7 +23,7 @@ Example result:
 
 You first need to [create a GitHub access token](https://github.com/settings/tokens) to create the releases (limit the scope to `repo`). Keep your token secure (don't put it in public repos).
 
-You need to put the token into the environment variable `GITHUB_RELEASE_TOKEN`. A good place to do this is in your `.bash_profile`:
+You need to set the environment variable `GITHUB_RELEASE_TOKEN` to token. A good place to do this is in your `.bash_profile`:
 
 ```bash
 export GITHUB_RELEASE_TOKEN=token12345
@@ -61,7 +61,7 @@ Then deploy with:
 rake deploy
 ```
 
-You also get `rake deploy:force`, `rake deploy:tag`, and `rake retag`.
+You also get `rake deploy:force`, `rake deploy:tag`, and `rake deploy:retag`.
 
 When deploying, a tag `heroku/vXX` (where XX is the Heroku version number) will be created, and then a GitHub release will be created for it.
 
@@ -69,7 +69,7 @@ When deploying, a tag `heroku/vXX` (where XX is the Heroku version number) will 
 
 `rake deploy:tag` can be run if you pushed to Heroku manually.
 
-If this gem updates the message format it uses for the releases, you can run `rake retag` to update the text in the tags and releases. This command does not go out to Heroku and fetch the list of releases there, it only updates the releases based on your tags. To backfill from Heroku data, see below.
+If this gem updates the message format it uses for the releases, you can run `rake deploy:retag` to update the text in the tags and releases. This command does not go out to Heroku and fetch the list of releases there, it only updates the releases based on your tags. To backfill from Heroku data, see below.
 
 
 ## Backfill
@@ -82,9 +82,9 @@ Go into `irb` and run:
 
 ```ruby
 app = "YOUR_HEROKU_APPNAME"
-require "base64"
 key = `heroku auth:token`.strip
 
+require "base64"
 require "httparty"
 response = HTTParty.get("https://api.heroku.com/apps/#{app}/releases",
   headers: {
@@ -95,4 +95,4 @@ deploys = response.parsed_response.select { |r| r["description"].start_with?("De
 puts deploys.map { |r| "GIT_COMMITTER_DATE='#{r["created_at"]}' git tag heroku/v#{r["version"]} " + r["description"][/[0-9a-f]{7}/] }.join("\n")
 ```
 
-When you have created all the tags, run `rake retag` to add the tag message and create the releases.
+When you have created all the tags, run `rake deploy:retag` to add the tag message and create the releases.
