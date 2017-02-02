@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    github-release-party (0.1.0)
+    github-release-party (0.1.1)
       httparty (~> 0.13)
 
 GEM
@@ -20,4 +20,4 @@ DEPENDENCIES
   rake (~> 12)
 
 BUNDLED WITH
-   1.13.6
+   1.14.3
