@@ -35,9 +35,11 @@ def github_tag(hash, ver)
   end
 
   # tag and push new tag
+  puts
   puts "Tagging #{tag_name}."
   success = system "git tag -a -m \"#{message.gsub('"','\\"')}\" #{tag_name} #{hash}"
   abort if not success
+  puts
   success = system "git push origin #{tag_name}"
   abort if not success
 
@@ -116,5 +118,12 @@ namespace :deploy do
     end
 
     puts "Done"
+  end
+
+  desc "List the new commits since last deploy (you might want to pull first to ensure you have the latest tag)"
+  task :changes do
+    last_tag = `git describe --tags --abbrev=0 --match 'heroku/v*' 2> /dev/null`.strip
+    last_tag = `git rev-list --max-parents=0 HEAD`.strip[0..6] if last_tag.empty?
+    system "git log --oneline --reverse #{last_tag}..HEAD"
   end
 end
