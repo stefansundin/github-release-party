@@ -66,7 +66,7 @@ class GithubReleaseParty
       puts "Body sent: #{body.to_json}"
       puts
       puts "Failed to create GitHub release!"
-      puts "Create it manually here: https://github.com/#{repo}/releases/new"
+      puts "Create it manually here: https://github.com/#{repo}/releases/new?tag=#{tag_name}"
       puts "Tag version: #{tag_name}"
       puts "Release title: #{tag_name}"
       puts "Message:"
