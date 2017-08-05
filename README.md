@@ -82,10 +82,12 @@ key = `heroku auth:token`.strip
 
 require "base64"
 require "httparty"
+
 response = HTTParty.get("https://api.heroku.com/apps/#{app}/releases",
   headers: {
     "Authorization" => "Basic #{Base64.encode64(':'+key)}".strip,
-    "Accept" => "application/vnd.heroku+json; version=3"
+    "Accept" => "application/vnd.heroku+json; version=3",
+    "Range" => "; max=1000",
   })
 deploys = response.parsed_response.select { |r| r["description"].start_with?("Deploy ") }
 puts deploys.map { |r| "GIT_COMMITTER_DATE='#{r["created_at"]}' git tag heroku/v#{r["version"]} " + r["description"][/[0-9a-f]{7}/] }.join("\n")
