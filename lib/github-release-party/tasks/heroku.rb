@@ -124,6 +124,6 @@ namespace :deploy do
   task :changes do
     last_tag = `git describe --tags --abbrev=0 --match 'heroku/v*' 2> /dev/null`.strip
     last_tag = `git rev-list --max-parents=0 HEAD`.strip[0..6] if last_tag.empty?
-    system "git log --oneline --reverse #{last_tag}..HEAD"
+    system "git log --oneline --no-decorate --reverse #{last_tag}..HEAD"
   end
 end
