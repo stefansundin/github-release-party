@@ -1,4 +1,5 @@
 require_relative "http"
+require_relative "github-release-party/version"
 
 class GithubReleaseParty < HTTP
   BASE_URL = "https://api.github.com"
