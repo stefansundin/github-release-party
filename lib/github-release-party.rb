@@ -1,21 +1,22 @@
-# This is a GitHub party, and everyone's invited!
+require_relative "http"
 
-require "httparty"
-
-class GithubReleaseParty
-  include HTTParty
-  base_uri "https://api.github.com"
+class GithubReleaseParty < HTTP
+  BASE_URL = "https://api.github.com"
+  PARAMS = "access_token=#{ENV["GITHUB_RELEASE_TOKEN"]}"
+  HEADERS = {
+    "User-Agent" => "github-release-party/#{GithubReleaseParty::VERSION}",
+  }
 
   def initialize
     return unless self.class.env_ok
     @releases = []
     page = 1
     while true
-      r = self.class.get "/repos/#{self.class.repo}/releases?page=#{page}", self.class.options
-      raise self.class.error(r) if not r.success?
-      break if r.parsed_response.count == 0
+      r = self.class.get("/repos/#{self.class.repo}/releases?page=#{page}")
+      raise(HTTPError, r) if !r.success?
+      break if r.json.length == 0
 
-      @releases = @releases + r.parsed_response
+      @releases = @releases + r.json
       page += 1
     end
   end
@@ -32,7 +33,7 @@ class GithubReleaseParty
   def self.update(id, name, message)
     return unless env_ok
 
-    r = patch "/repos/#{repo}/releases/#{id}", options.merge({
+    r = patch("/repos/#{repo}/releases/#{id}", {
       body: {
         name: name,
         body: message
@@ -55,7 +56,7 @@ class GithubReleaseParty
       body: message
     }
 
-    r = post "/repos/#{repo}/releases", options.merge({
+    r = post("/repos/#{repo}/releases", {
       body: body.to_json
     })
     if r.success?
@@ -75,11 +76,11 @@ class GithubReleaseParty
   end
 
   def self.env_ok
-    if not ENV["GITHUB_RELEASE_TOKEN"]
+    if !ENV["GITHUB_RELEASE_TOKEN"]
       puts "Configure GITHUB_RELEASE_TOKEN to create GitHub releases. See https://github.com/stefansundin/github-release-party#setup"
       return false
     end
-    if not repo
+    if !repo
       puts "Can't find the GitHub repo. Please use the remote 'origin'."
       return false
     end
@@ -87,23 +88,12 @@ class GithubReleaseParty
   end
 
   def self.repo
-    `git remote -v`.scan(/^origin\t.*github\.com[:\/](.+)\.git /).uniq.flatten.first
+    @repo ||= `git remote -v`.scan(/^origin\t.*github\.com[:\/](.+)\.git /).uniq.flatten.first
   end
 
   private
 
-  def self.options
-    {
-      query: {
-        access_token: ENV["GITHUB_RELEASE_TOKEN"]
-      },
-      headers: {
-        "User-Agent" => "github-release-party/#{GithubReleaseParty::VERSION}"
-      }
-    }
-  end
-
   def self.error(r)
-    "#{r.request.path.to_s}: #{r.code} #{r.message}: #{r.body}. #{r.headers.to_h.to_json}"
+    "#{r.url}: #{r.code}: #{r.body}. #{r.headers.to_json}"
   end
 end

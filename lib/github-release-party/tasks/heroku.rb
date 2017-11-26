@@ -46,7 +46,7 @@ def github_tag(hash, ver)
   # create GitHub release
   puts
   puts "Waiting 3 seconds to let GitHub process the new tag."
-  sleep 3
+  sleep(3)
   GithubReleaseParty.create(tag_name, ver, message)
 end
 
@@ -90,7 +90,7 @@ namespace :deploy do
     repo = GithubReleaseParty.repo
 
     tags = `git tag -l heroku/v* --sort=version:refname`.split("\n")
-    puts "Found #{tags.count} tags."
+    puts "Found #{tags.length} tags."
     tags.each_with_index do |tag_name, i|
       ver = tag_name[/v(\d+)/]
       last_tag = if i == 0

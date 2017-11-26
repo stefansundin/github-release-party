@@ -16,8 +16,6 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = ">= 1.3.6"
 
-  s.add_dependency "httparty", "~> 0.13"
-
   s.add_development_dependency "rake", "~> 12"
 
   s.files        = `git ls-files`.split("\n").select { |f| f.start_with?("lib/") }

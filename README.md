@@ -31,7 +31,7 @@ Add the gem to your Gemfile:
 
 ```ruby
 group :development do
-  gem "github-release-party", "~> 0.1.1"
+  gem "github-release-party", "~> 0.2.0"
 end
 ```
 
@@ -81,15 +81,29 @@ app = "YOUR_HEROKU_APPNAME"
 key = `heroku auth:token`.strip
 
 require "base64"
-require "httparty"
+require "net/http"
+require "json"
 
-response = HTTParty.get("https://api.heroku.com/apps/#{app}/releases",
-  headers: {
-    "Authorization" => "Basic #{Base64.encode64(':'+key)}".strip,
-    "Accept" => "application/vnd.heroku+json; version=3",
-    "Range" => "; max=1000",
-  })
-deploys = response.parsed_response.select { |r| r["description"].start_with?("Deploy ") }
+def http_get(url, headers)
+  uri = URI.parse(url)
+  Net::HTTP.start(uri.host, uri.port, {
+    use_ssl: uri.scheme == "https",
+  }) do |http|
+    endpoint = uri.path
+    endpoint += "?#{uri.query}" if uri.query
+    endpoint += "##{uri.fragment}" if uri.fragment
+    return http.request_get(endpoint, headers)
+  end
+end
+
+response = http_get("https://api.heroku.com/apps/#{app}/releases", {
+  "Authorization" => "Basic #{Base64.encode64(':'+key).strip}",
+  "Accept" => "application/vnd.heroku+json; version=3",
+  "Range" => "; max=1000",
+})
+
+data = JSON.parse(response.body)
+deploys = data.select { |r| r["description"].start_with?("Deploy ") }
 puts deploys.map { |r| "GIT_COMMITTER_DATE='#{r["created_at"]}' git tag heroku/v#{r["version"]} " + r["description"][/[0-9a-f]{7}/] }.join("\n")
 ```
 
