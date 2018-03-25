@@ -1,4 +1,4 @@
-require File.expand_path("../lib/github-release-party/version", __FILE__)
+require_relative "lib/github-release-party/version"
 
 Gem::Specification.new do |s|
   s.name        = "github-release-party"
