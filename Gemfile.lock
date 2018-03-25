@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    github-release-party (0.2.2)
+    github-release-party (0.2.3)
       addressable (~> 2)
       rake (~> 12)
 
