@@ -2,6 +2,8 @@ PATH
   remote: .
   specs:
     github-release-party (0.2.2)
+      addressable (~> 2)
+      rake (~> 12)
 
 GEM
   remote: https://rubygems.org/
@@ -15,9 +17,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  addressable (~> 2)
   github-release-party!
-  rake (~> 12)
 
 BUNDLED WITH
    1.16.1
