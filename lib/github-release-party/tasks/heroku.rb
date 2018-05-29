@@ -27,7 +27,7 @@ def github_tag(hash, ver)
     last_tag = `git rev-list --max-parents=0 HEAD`.strip[0..6]
     first_deploy = true
   end
-  commits = `git log #{last_tag}..#{hash} --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
+  commits = `git log #{last_tag}..#{hash} --first-parent --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
   message = "Deploy #{hash[0..6]}\n\nDiff: https://github.com/#{repo}/compare/#{last_tag}...#{tag_name}\n#{commits}"
 
   if first_deploy
@@ -92,6 +92,7 @@ namespace :deploy do
     tags = `git tag -l heroku/v* --sort=version:refname`.split("\n")
     puts "Found #{tags.length} tags."
     tags.each_with_index do |tag_name, i|
+      puts
       ver = tag_name[/v(\d+)/]
       last_tag = if i == 0
         `git rev-list --max-parents=0 HEAD`.strip
@@ -117,6 +118,7 @@ namespace :deploy do
       github.update_or_create(tag_name, ver, message)
     end
 
+    puts
     puts "Done"
   end
 
