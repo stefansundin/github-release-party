@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    github-release-party (0.3.0)
+    github-release-party (0.3.1)
       addressable (~> 2)
       rake (~> 12)
 
@@ -10,8 +10,8 @@ GEM
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    public_suffix (3.0.2)
-    rake (12.3.1)
+    public_suffix (3.0.3)
+    rake (12.3.2)
 
 PLATFORMS
   ruby
@@ -20,4 +20,4 @@ DEPENDENCIES
   github-release-party!
 
 BUNDLED WITH
-   1.16.2
+   1.17.1
