@@ -37,7 +37,7 @@ def github_tag(hash, ver)
   # tag and push new tag
   puts
   puts "Tagging #{tag_name}."
-  success = system "git tag -a -m \"#{message.gsub('"','\\"')}\" #{tag_name} #{hash}"
+  success = system "git tag -a -m #{Shellwords.shellescape(message)} #{tag_name} #{hash}"
   abort if not success
   puts
   success = system "git push origin #{tag_name}"
@@ -109,7 +109,7 @@ namespace :deploy do
         message += "\n"+`git show #{last_tag} -s --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
       end
 
-      success = system "GIT_COMMITTER_DATE='#{date}' git tag -f -a -m \"#{message.gsub('"','\\"')}\" #{tag_name} #{tag_name}^{}"
+      success = system "GIT_COMMITTER_DATE='#{date}' git tag -f -a -m #{Shellwords.shellescape(message)} #{tag_name} #{tag_name}^{}"
       abort if not success
       success = system "git push -f origin #{tag_name}"
       abort if not success
