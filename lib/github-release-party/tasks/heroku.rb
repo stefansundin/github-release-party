@@ -1,4 +1,5 @@
 require "open3"
+require "shellwords"
 require "github-release-party"
 
 def heroku_push(args=[])
