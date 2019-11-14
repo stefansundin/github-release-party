@@ -31,7 +31,7 @@ Add the gem to your Gemfile:
 
 ```ruby
 group :development do
-  gem "github-release-party", "~> 0.2.0"
+  gem "github-release-party", require: false
 end
 ```
 
