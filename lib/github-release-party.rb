@@ -1,65 +1,44 @@
-require_relative "http"
 require_relative "github-release-party/version"
 
-class GithubReleaseParty < HTTP
-  BASE_URL = "https://api.github.com"
-  PARAMS = "access_token=#{ENV["GITHUB_RELEASE_TOKEN"]}"
-  HEADERS = {
-    "User-Agent" => "github-release-party/#{GithubReleaseParty::VERSION}",
-  }
-
-  def initialize
-    return unless self.class.env_ok
-    @releases = []
+class GithubReleaseParty
+  def self.releases
+    releases = []
     page = 1
     while true
-      r = self.class.get("/repos/#{self.class.repo}/releases?page=#{page}")
-      raise(HTTPError, r) if !r.success?
+      r = GitHub.get("/repos/#{repo}/releases?page=#{page}")
+      if !r.success?
+        puts "Error occurred when fetching releases:"
+        puts error(r)
+        abort
+      end
       break if r.json.length == 0
-
-      @releases = @releases + r.json
+      releases = releases + r.json
       page += 1
     end
-  end
-
-  def update_or_create(tag_name, name, message)
-    release = @releases.find { |rel| rel["tag_name"] == tag_name }
-    if release
-      self.class.update(release["id"], name, message)
-    else
-      self.class.create(tag_name, name, message)
-    end
+    return releases
   end
 
   def self.update(id, name, message)
-    return unless env_ok
-
-    r = patch("/repos/#{repo}/releases/#{id}", {
-      body: {
-        name: name,
-        body: message
-      }.to_json
-    })
+    r = GitHub.patch("/repos/#{repo}/releases/#{id}", {
+      name: name,
+      body: message
+    }.to_json)
     if r.success?
       puts "GitHub release #{name} updated!"
     else
-      puts "Failed to update GitHub release #{tag_name}!"
+      puts "Failed to update GitHub release #{name}!"
       puts error(r)
     end
   end
 
   def self.create(tag_name, name, message)
-    return unless env_ok
-
     body = {
       tag_name: tag_name,
       name: name,
       body: message
     }
 
-    r = post("/repos/#{repo}/releases", {
-      body: body.to_json
-    })
+    r = GitHub.post("/repos/#{repo}/releases", body.to_json)
     if r.success?
       puts "GitHub release #{tag_name} created!"
     else
@@ -76,16 +55,13 @@ class GithubReleaseParty < HTTP
     end
   end
 
-  def self.env_ok
+  def self.check_env!
     if !ENV["GITHUB_RELEASE_TOKEN"]
-      puts "Configure GITHUB_RELEASE_TOKEN to create GitHub releases. See https://github.com/stefansundin/github-release-party#setup"
-      return false
+      abort "Configure GITHUB_RELEASE_TOKEN to create GitHub releases. See https://github.com/stefansundin/github-release-party#setup"
     end
     if !repo
-      puts "Can't find the GitHub repo. Please use the remote 'origin'."
-      return false
+      abort "Can't find the GitHub repo. Please use the remote 'origin'."
     end
-    return true
   end
 
   def self.repo
@@ -95,6 +71,74 @@ class GithubReleaseParty < HTTP
   private
 
   def self.error(r)
-    "#{r.url}: #{r.code}: #{r.body}. #{r.headers.to_json}"
+    "#{r.request_uri}: #{r.code}: #{r.body}\nHeaders: #{r.headers.to_json}"
+  end
+
+  class GitHub
+    def self.get(*args)
+      request(:request_get, *args)
+    end
+
+    def self.post(*args)
+      request(:request_post, *args)
+    end
+
+    def self.patch(*args)
+      request(:patch, *args)
+    end
+
+    private
+
+    def self.request(method, request_uri, body=nil)
+      opts = {
+        use_ssl: true,
+        open_timeout: 10,
+        read_timeout: 10,
+      }
+      Net::HTTP.start("api.github.com", 443, opts) do |http|
+        headers = {
+          "Authorization" => "token #{ENV["GITHUB_RELEASE_TOKEN"]}",
+          "User-Agent" => "github-release-party/#{GithubReleaseParty::VERSION}",
+        }
+        if method == :request_post or method == :patch
+          # response = http.send(:request_get, "/", headers)
+          response = http.send(method, request_uri, body, headers)
+        else
+          response = http.send(method, request_uri, headers)
+        end
+        return HTTPResponse.new(response, request_uri)
+      end
+    end
+  end
+
+  class HTTPResponse
+    def initialize(response, request_uri)
+      @response = response
+      @request_uri = request_uri
+    end
+
+    def request_uri
+      @request_uri
+    end
+
+    def body
+      @response.body
+    end
+
+    def json
+      @json ||= JSON.parse(@response.body)
+    end
+
+    def headers
+      @response.to_hash
+    end
+
+    def code
+      @response.code.to_i
+    end
+
+    def success?
+      @response.is_a?(Net::HTTPSuccess)
+    end
   end
 end

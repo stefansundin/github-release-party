@@ -1,5 +1,3 @@
-require_relative "../http"
-
-class GithubReleaseParty < HTTP
-  VERSION = "0.3.3"
+class GithubReleaseParty
+  VERSION = "0.3.4"
 end

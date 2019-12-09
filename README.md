@@ -86,13 +86,8 @@ require "json"
 
 def http_get(url, headers)
   uri = URI.parse(url)
-  Net::HTTP.start(uri.host, uri.port, {
-    use_ssl: uri.scheme == "https",
-  }) do |http|
-    endpoint = uri.path
-    endpoint += "?#{uri.query}" if uri.query
-    endpoint += "##{uri.fragment}" if uri.fragment
-    return http.request_get(endpoint, headers)
+  Net::HTTP.start(uri.host, uri.port, { use_ssl: uri.scheme == "https" }) do |http|
+    return http.request_get(uri.path, headers)
   end
 end
 

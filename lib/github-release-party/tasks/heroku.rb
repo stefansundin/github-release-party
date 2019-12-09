@@ -54,7 +54,7 @@ end
 
 desc "Deploy a new version to Heroku"
 task :deploy do
-  abort if not GithubReleaseParty.env_ok
+  GithubReleaseParty.check_env!
   ver = heroku_push() or abort("Deploy failed.")
   hash = `git rev-parse HEAD`.strip
   github_tag(hash, ver)
@@ -63,7 +63,7 @@ end
 namespace :deploy do
   desc "Deploy a new version to Heroku using --force"
   task :force do
-    abort if not GithubReleaseParty.env_ok
+    GithubReleaseParty.check_env!
     ver = heroku_push(%w[--force]) or abort("Deploy failed.")
     hash = `git rev-parse HEAD`.strip
     github_tag(hash, ver)
@@ -71,7 +71,7 @@ namespace :deploy do
 
   desc "Tag last release"
   task :tag do
-    abort if not GithubReleaseParty.env_ok
+    GithubReleaseParty.check_env!
 
     # get heroku version number
     begin
@@ -87,7 +87,8 @@ namespace :deploy do
 
   desc "Rebuild all the release tags"
   task :retag do
-    github = GithubReleaseParty.new
+    GithubReleaseParty.check_env!
+    releases = GithubReleaseParty.releases
     repo = GithubReleaseParty.repo
 
     tags = `git tag -l heroku/v* --sort=version:refname`.split("\n")
@@ -116,7 +117,12 @@ namespace :deploy do
       abort if not success
 
       # update or create GitHub release
-      github.update_or_create(tag_name, ver, message)
+      release = releases.find { |rel| rel["tag_name"] == tag_name }
+      if release
+        GithubReleaseParty.update(release["id"], ver, message)
+      else
+        GithubReleaseParty.create(tag_name, ver, message)
+      end
     end
 
     puts
