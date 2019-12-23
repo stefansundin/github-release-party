@@ -1,4 +1,6 @@
 require_relative "github-release-party/version"
+require "net/http"
+require "json"
 
 class GithubReleaseParty
   def self.releases
