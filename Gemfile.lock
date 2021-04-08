@@ -7,7 +7,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    rake (13.0.1)
+    rake (13.0.3)
 
 PLATFORMS
   ruby
@@ -16,4 +16,4 @@ DEPENDENCIES
   github-release-party!
 
 BUNDLED WITH
-   1.17.2
+   2.2.3
