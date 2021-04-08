@@ -23,7 +23,7 @@ class GithubReleaseParty
   def self.update(id, name, message)
     r = GitHub.patch("/repos/#{repo}/releases/#{id}", {
       name: name,
-      body: message
+      body: message,
     }.to_json)
     if r.success?
       puts "GitHub release #{name} updated!"
@@ -37,7 +37,7 @@ class GithubReleaseParty
     body = {
       tag_name: tag_name,
       name: name,
-      body: message
+      body: message,
     }
 
     r = GitHub.post("/repos/#{repo}/releases", body.to_json)
@@ -48,7 +48,7 @@ class GithubReleaseParty
       puts
       puts "Body sent: #{body.to_json}"
       puts
-      puts "Failed to create GitHub release!"
+      puts "Failed to create a GitHub release!"
       puts "Create it manually here: https://github.com/#{repo}/releases/new?tag=#{tag_name}"
       puts "Tag version: #{tag_name}"
       puts "Release title: #{tag_name}"
@@ -62,7 +62,7 @@ class GithubReleaseParty
       abort "Configure GITHUB_RELEASE_TOKEN to create GitHub releases. See https://github.com/stefansundin/github-release-party#setup"
     end
     if !repo
-      abort "Can't find the GitHub repo. Please use the remote 'origin'."
+      abort "Can't find the GitHub repository. Please use the remote 'origin'."
     end
   end
 
@@ -103,7 +103,6 @@ class GithubReleaseParty
           "User-Agent" => "github-release-party/#{GithubReleaseParty::VERSION}",
         }
         if method == :request_post or method == :patch
-          # response = http.send(:request_get, "/", headers)
           response = http.send(method, request_uri, body, headers)
         else
           response = http.send(method, request_uri, headers)

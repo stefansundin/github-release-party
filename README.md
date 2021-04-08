@@ -1,4 +1,4 @@
-# github-release-party [![Gem Version](https://badge.fury.io/rb/github-release-party.svg)](https://rubygems.org/gems/github-release-party) [![RSS](https://stefansundin.github.io/img/feed.png)](https://github.com/stefansundin/github-release-party/releases.atom)
+# github-release-party [![Gem Version](https://badge.fury.io/rb/github-release-party.svg)](https://rubygems.org/gems/github-release-party)
 
 > Automatically create GitHub releases when you deploy.
 
@@ -7,8 +7,8 @@ I use this gem to automatically create GitHub releases when I deploy to Heroku. 
 The gem includes rake tasks to deploy to Heroku. Please submit any improvements as issues.
 
 Example result:
-- Release page: https://github.com/stefansundin/github-activity/releases
-- RSS Feed: https://github.com/stefansundin/github-activity/releases.atom
+- Release page: https://github.com/stefansundin/rssbox/releases
+- RSS Feed: https://github.com/stefansundin/rssbox/releases.atom
 
 
 ## Installation
