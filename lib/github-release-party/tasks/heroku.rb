@@ -28,7 +28,7 @@ def github_tag(hash, ver)
     last_tag = `git rev-list --max-parents=0 HEAD`.strip[0..6]
     first_deploy = true
   end
-  commits = `git log #{last_tag}..#{hash} --first-parent --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
+  commits = `git log #{last_tag}..#{hash} --reverse --first-parent --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
   message = "Deploy #{hash[0..6]}\n\nDiff: https://github.com/#{repo}/compare/#{last_tag}...#{tag_name}\n#{commits}"
 
   if first_deploy
@@ -104,7 +104,7 @@ namespace :deploy do
 
       hash = `git rev-list --max-count=1 #{tag_name}`.strip
       date = `git show --pretty="format:%ai" -s --no-color #{tag_name} | tail -1`.strip
-      commits = `git log #{last_tag}..#{tag_name} --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
+      commits = `git log #{last_tag}..#{tag_name} --reverse --pretty=format:"- [%s](https://github.com/#{repo}/commit/%H)"`
       message = "Deploy #{hash[0..6]}\n\nDiff: https://github.com/#{repo}/compare/#{last_tag}...#{tag_name}\n#{commits}"
 
       if i == 0
