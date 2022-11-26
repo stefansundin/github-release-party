@@ -48,7 +48,7 @@ def github_tag(hash, ver)
   puts
   puts "Waiting 3 seconds to let GitHub process the new tag."
   sleep(3)
-  GithubReleaseParty.create(tag_name, ver, message)
+  GithubReleaseParty.create(tag_name, message)
 end
 
 
@@ -95,7 +95,6 @@ namespace :deploy do
     puts "Found #{tags.length} tags."
     tags.each_with_index do |tag_name, i|
       puts
-      ver = tag_name[/v(\d+)/]
       last_tag = if i == 0
         `git rev-list --max-parents=0 HEAD`.strip
       else
@@ -119,9 +118,9 @@ namespace :deploy do
       # update or create GitHub release
       release = releases.find { |rel| rel["tag_name"] == tag_name }
       if release
-        GithubReleaseParty.update(release["id"], ver, message)
+        GithubReleaseParty.update(release["id"], tag_name, message)
       else
-        GithubReleaseParty.create(tag_name, ver, message)
+        GithubReleaseParty.create(tag_name, message)
       end
     end
 

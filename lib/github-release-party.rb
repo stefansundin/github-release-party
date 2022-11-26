@@ -20,8 +20,8 @@ class GithubReleaseParty
     return releases
   end
 
-  def self.update(id, name, message)
-    r = GitHub.patch("/repos/#{repo}/releases/#{id}", {
+  def self.update(release_id, name, message)
+    r = GitHub.patch("/repos/#{repo}/releases/#{release_id}", {
       name: name,
       body: message,
     }.to_json)
@@ -33,10 +33,10 @@ class GithubReleaseParty
     end
   end
 
-  def self.create(tag_name, name, message)
+  def self.create(tag_name, message)
     body = {
       tag_name: tag_name,
-      name: name,
+      name: tag_name,
       body: message,
     }
 
