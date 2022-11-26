@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email       = ["rubygems@stefansundin.com"]
   s.homepage    = "https://github.com/stefansundin/github-release-party"
   s.summary     = "Easily create GitHub releases."
-  s.description = "I use this gem to automatically create GitHub releases when I deploy to Heroku. See the GitHub page for usage."
+  s.description = "I use this gem to automatically create GitHub releases when I deploy. See the GitHub page for usage."
   s.license     = "GPL-3.0"
 
   s.cert_chain  = ["certs/stefansundin.pem"]
