@@ -79,7 +79,7 @@ namespace :deploy do
       ver = `heroku releases --app '#{heroku_app}'`.split("\n")[1].split(" ")[0]
       hash = `git rev-parse HEAD`.strip
     rescue
-      abort "There was a problem getting the release number. Have you logged in with the Heroku cli? Try again with 'rake deploy:tag'."
+      abort "There was a problem getting the release number. Have you logged in with the Heroku cli?"
     end
 
     github_tag(hash, ver)

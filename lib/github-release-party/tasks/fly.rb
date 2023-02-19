@@ -67,11 +67,15 @@ namespace :deploy do
 
     # get fly version number
     begin
-      fly_releases = JSON.parse(`fly releases --json`)
+      data = `fly releases --json`
+      abort if not $?.success?
+      fly_releases = JSON.parse(data)
       ver = "v#{fly_releases[0]["Version"]}"
       hash = `git rev-parse HEAD`.strip
-    rescue
-      abort "There was a problem getting the release number. Have you logged in with flyctl? Try again with 'rake deploy:tag'."
+    rescue => err
+      puts "There was a problem getting the release number."
+      puts "The error was: #{err.message}"
+      abort
     end
 
     github_tag(hash, ver)
