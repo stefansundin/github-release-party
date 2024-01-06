@@ -3,19 +3,18 @@ require "shellwords"
 require "github-release-party"
 
 def fly_deploy(args=[])
-  # grab the new version number from the "fly deploy" output
   cmd = %w[fly deploy] + args
-  ver = Open3.popen2e(*cmd) do |stdin, output, thread|
-    v = nil
-    output.each do |line|
-      puts line
-      if /--> release (v\d+) created/ =~ line
-        v = $~[1]
-      end
-    end
-    v
-  end
-  return ver
+  return system(*cmd)
+end
+
+def fly_releases()
+  data = `fly releases --json`
+  abort if not $?.success?
+  return JSON.parse(data)
+rescue => err
+  puts "There was a problem getting the release number."
+  puts "The error was: #{err.message}"
+  abort
 end
 
 def github_tag(hash, ver)
@@ -55,7 +54,9 @@ end
 desc "Deploy a new version to Fly"
 task :deploy do
   GithubReleaseParty.check_env!
-  ver = fly_deploy() or abort("Deploy failed.")
+  fly_deploy() or abort("Deploy failed.")
+  releases = fly_releases()
+  ver = "v#{releases[0]["Version"]}"
   hash = `git rev-parse HEAD`.strip
   github_tag(hash, ver)
 end
@@ -64,20 +65,9 @@ namespace :deploy do
   desc "Tag last release"
   task :tag do
     GithubReleaseParty.check_env!
-
-    # get fly version number
-    begin
-      data = `fly releases --json`
-      abort if not $?.success?
-      fly_releases = JSON.parse(data)
-      ver = "v#{fly_releases[0]["Version"]}"
-      hash = `git rev-parse HEAD`.strip
-    rescue => err
-      puts "There was a problem getting the release number."
-      puts "The error was: #{err.message}"
-      abort
-    end
-
+    releases = fly_releases()
+    ver = "v#{releases[0]["Version"]}"
+    hash = `git rev-parse HEAD`.strip
     github_tag(hash, ver)
   end
 
