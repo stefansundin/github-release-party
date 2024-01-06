@@ -1,19 +1,19 @@
 PATH
   remote: .
   specs:
-    github-release-party (0.4.2)
+    github-release-party (0.4.3)
       rake (>= 12)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    rake (13.0.6)
+    rake (13.1.0)
 
 PLATFORMS
-  ruby
+  arm64-darwin-22
 
 DEPENDENCIES
   github-release-party!
 
 BUNDLED WITH
-   2.4.6
+   2.4.19
