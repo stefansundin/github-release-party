@@ -15,9 +15,13 @@ Example result:
 
 ### Setup
 
-You first need to [create a GitHub access token](https://github.com/settings/tokens) to create the releases (limit the scope to `repo`). Keep your token secure (don't put it in public repos).
+You need to provide a GitHub access token so that the gem can create the GitHub release after the deployment has finished. There are two different kinds of GitHub access tokens:
+- The recommended token is [a fine-grained token](https://github.com/settings/personal-access-tokens). Add only the repositories required and grant `Read and write` access to "Contents" only.
+- You can also create [a classic token](https://github.com/settings/tokens). Limit the scope to `repo`.
 
-You need to set the environment variable `GITHUB_RELEASE_TOKEN` to token. A good place to do this is in your `.bash_profile`:
+**Keep your token secure! Don't commit it to a public repo!**
+
+You need to set the environment variable `GITHUB_RELEASE_TOKEN` with the token as the value. A good place to do this is in your `.bash_profile`:
 
 ```bash
 export GITHUB_RELEASE_TOKEN=token12345
