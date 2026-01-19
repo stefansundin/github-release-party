@@ -8,7 +8,7 @@ class GithubReleaseParty
     page = 1
     while true
       r = GitHub.get("/repos/#{repo}/releases?page=#{page}")
-      if !r.success?
+      unless r.success?
         puts "Error occurred when fetching releases:"
         puts error(r)
         abort
@@ -58,11 +58,19 @@ class GithubReleaseParty
   end
 
   def self.check_env!
-    if !ENV["GITHUB_RELEASE_TOKEN"]
+    unless ENV["GITHUB_RELEASE_TOKEN"]
       abort "Configure GITHUB_RELEASE_TOKEN to create GitHub releases. See https://github.com/stefansundin/github-release-party#setup"
     end
-    if !repo
+    unless repo
       abort "Can't find the GitHub repository. Please use the remote 'origin'."
+    end
+    r = GitHub.get("/user")
+    if r.success?
+      puts "Creating GitHub release with user #{r.json["login"]}."
+    else
+      puts "Error authenticating with GitHub. Your token may have expired."
+      puts r.body
+      abort
     end
   end
 

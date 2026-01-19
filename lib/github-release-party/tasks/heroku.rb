@@ -39,10 +39,10 @@ def github_tag(hash, ver)
   puts
   puts "Tagging #{tag_name}."
   success = system "git tag -a -m #{Shellwords.shellescape(message)} #{tag_name} #{hash}"
-  abort if not success
+  abort unless success
   puts
   success = system "git push origin #{tag_name}"
-  abort if not success
+  abort unless success
 
   # create GitHub release
   puts
@@ -111,9 +111,9 @@ namespace :deploy do
       end
 
       success = system "GIT_COMMITTER_DATE='#{date}' git tag -f -a -m #{Shellwords.shellescape(message)} #{tag_name} #{tag_name}^{}"
-      abort if not success
+      abort unless success
       success = system "git push -f origin #{tag_name}"
-      abort if not success
+      abort unless success
 
       # update or create GitHub release
       release = releases.find { |rel| rel["tag_name"] == tag_name }
